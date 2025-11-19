@@ -78,6 +78,6 @@ elif section == "Comments Analytics":
 
     st.dataframe(df_comments)
 
-    top_authors = df_comments["author"].value_counts().head(10)
+    top_authors = df_comments["author_name"].value_counts().head(10)
     st.subheader("Top Commenters")
     st.bar_chart(top_authors)
