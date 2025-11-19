@@ -1,14 +1,17 @@
-import os
-import googleapiclient.discovery
-from dotenv import load_dotenv
+import streamlit as st
+from googleapiclient.discovery import build
 
-load_dotenv()
-API_KEY = os.getenv("YOUTUBE_API_KEY")
+
+# ---------------------------------------------------------
+# Load API key from Streamlit Secrets
+# ---------------------------------------------------------
+API_KEY = st.secrets["YOUTUBE_API_KEY"]
+
 
 def get_youtube():
-    return googleapiclient.discovery.build(
-        "youtube", "v3", developerKey=API_KEY
-    )
+    """Create a YouTube API client using the secret API key."""
+    return build("youtube", "v3", developerKey=API_KEY)
+
 
 # ---------------------------------------------------------
 # 1. Fetch Channel Details
@@ -22,10 +25,9 @@ def fetch_channel_details(channel_id):
     )
     response = request.execute()
 
-    print("CHANNEL API RESPONSE:", response)  # DEBUG
-
-    if "items" not in response or len(response["items"]) == 0:
-        raise Exception(f"Invalid response from YouTube API: {response}")
+    # Fix: Ensure 'items' exists and is not empty
+    if not response.get("items"):
+        raise Exception("❌ Channel ID not found or API request failed!")
 
     item = response["items"][0]
 
@@ -40,7 +42,7 @@ def fetch_channel_details(channel_id):
 
 
 # ---------------------------------------------------------
-# 2. Fetch Videos
+# 2. Fetch Videos for a Channel
 # ---------------------------------------------------------
 def fetch_videos_for_channel(channel_id):
     youtube = get_youtube()
@@ -53,9 +55,13 @@ def fetch_videos_for_channel(channel_id):
     )
     response = request.execute()
 
+    if not response.get("items"):
+        return []
+
     videos = []
     for item in response["items"]:
-        if item["id"]["kind"] != "youtube#video":
+        # Ignore non-video results
+        if item["id"].get("kind") != "youtube#video":
             continue
 
         videos.append({
@@ -67,6 +73,7 @@ def fetch_videos_for_channel(channel_id):
         })
 
     return videos
+
 
 # ---------------------------------------------------------
 # 3. Fetch Comments for All Videos
@@ -97,7 +104,9 @@ def fetch_comments_for_videos(video_ids):
                     "published_at": top.get("publishedAt", ""),
                     "like_count": top.get("likeCount", 0)
                 })
-        except:
+
+        except Exception:
+            # YouTube often blocks comments on some videos
             continue
 
     return comments
