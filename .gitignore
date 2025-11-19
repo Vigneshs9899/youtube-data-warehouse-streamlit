@@ -1,0 +1,32 @@
+# Ignore virtual environment
+venv/
+ENV/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables
+.env
+
+# OS/system files
+.DS_Store
+Thumbs.db
+
+# Data folders
+data/
+dataset/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Streamlit static
+.streamlit/
+
+# Other unnecessary files
+*.sqlite

@@ -1,0 +1,4 @@
+commentId,videoId,author,text,publishedAt,likeCount
+C1,V1,User1,Great video!,2024-01-02,5
+C2,V1,User2,Awesome!,2024-01-03,9
+C3,V2,User1,Love this content,2024-02-11,2
