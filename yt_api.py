@@ -47,29 +47,56 @@ def fetch_channel_details(channel_id):
 def fetch_videos_for_channel(channel_id):
     youtube = get_youtube()
 
+    # 1️⃣ First request: list videos
     request = youtube.search().list(
-        part="snippet",
+        part="id",
         channelId=channel_id,
         maxResults=50,
         order="date"
     )
     response = request.execute()
 
-    if not response.get("items"):
+    video_ids = [
+        item["id"]["videoId"]
+        for item in response.get("items", [])
+        if item["id"]["kind"] == "youtube#video"
+    ]
+
+    if not video_ids:
         return []
 
+    # 2️⃣ Second request: get full video details
+    request2 = youtube.videos().list(
+        part="snippet,contentDetails,statistics",
+        id=",".join(video_ids)
+    )
+    response2 = request2.execute()
+
     videos = []
-    for item in response["items"]:
-        # Ignore non-video results
-        if item["id"].get("kind") != "youtube#video":
-            continue
+
+    for item in response2.get("items", []):
+        snippet = item["snippet"]
+        stats = item.get("statistics", {})
+        content = item.get("contentDetails", {})
+
+        # Convert duration ISO8601 → seconds
+        from isodate import parse_duration
+        try:
+            duration_seconds = int(parse_duration(content.get("duration", "PT0S")).total_seconds())
+        except:
+            duration_seconds = None
 
         videos.append({
-            "video_id": item["id"]["videoId"],
+            "video_id": item["id"],
             "channel_id": channel_id,
-            "title": item["snippet"]["title"],
-            "description": item["snippet"]["description"],
-            "published_at": item["snippet"]["publishedAt"],
+            "title": snippet["title"],
+            "description": snippet.get("description", ""),
+            "published_at": snippet.get("publishedAt"),
+            "view_count": int(stats.get("viewCount", 0)),
+            "like_count": int(stats.get("likeCount", 0)),
+            "comment_count": int(stats.get("commentCount", 0)),
+            "duration_iso": content.get("duration", "PT0S"),
+            "duration_seconds": duration_seconds
         })
 
     return videos
