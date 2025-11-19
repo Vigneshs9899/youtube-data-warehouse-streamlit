@@ -32,9 +32,9 @@ if section == "Channel Stats":
     ch = channels_df[channels_df["channel_id"] == selected_channel]
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Subscribers", int(ch["subscriberCount"].iloc[0]))
-    col2.metric("Views", int(ch["viewCount"].iloc[0]))
-    col3.metric("Videos", int(ch["videoCount"].iloc[0]))
+    col1.metric("Subscribers", int(ch["subscriber_count"].iloc[0]))
+    col2.metric("Views", int(ch["view_count"].iloc[0]))
+    col3.metric("Videos", int(ch["video_count"].iloc[0]))
 
     st.dataframe(ch)
 
