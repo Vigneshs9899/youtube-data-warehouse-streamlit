@@ -55,7 +55,7 @@ elif section == "Video Analytics":
     st.dataframe(df_videos)
 
     st.subheader("Views Over Time")
-    fig = px.line(df_videos, x="published_at", y="viewCount", title="Views Over Time")
+    fig = px.line(df_videos, x="published_at", y="view_count", title="Views Over Time")
     st.plotly_chart(fig, use_container_width=True)
 
 # -------------------------
