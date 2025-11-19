@@ -22,8 +22,10 @@ def fetch_channel_details(channel_id):
     )
     response = request.execute()
 
-    if not response["items"]:
-        raise Exception("Channel ID not found!")
+    print("CHANNEL API RESPONSE:", response)  # DEBUG
+
+    if "items" not in response or len(response["items"]) == 0:
+        raise Exception(f"Invalid response from YouTube API: {response}")
 
     item = response["items"][0]
 
@@ -35,6 +37,7 @@ def fetch_channel_details(channel_id):
         "video_count": int(item["statistics"].get("videoCount", 0)),
         "view_count": int(item["statistics"].get("viewCount", 0)),
     }
+
 
 # ---------------------------------------------------------
 # 2. Fetch Videos
