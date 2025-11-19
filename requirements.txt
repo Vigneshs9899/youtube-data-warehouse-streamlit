@@ -1,9 +1,9 @@
 streamlit
 pandas
+plotly
 sqlalchemy
 psycopg2-binary
-google-api-python-client
 python-dotenv
-requests
-plotly
-isodate
+google-api-python-client
+google-auth
+google-auth-httplib2
