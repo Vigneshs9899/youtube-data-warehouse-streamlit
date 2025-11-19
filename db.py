@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 # Use DATABASE_URL stored in Streamlit Cloud secrets
 DATABASE_URL = st.secrets["DATABASE_URL"]
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, connect_args={"sslmode": "require"})
 SessionLocal = sessionmaker(bind=engine)
 
 def get_db():

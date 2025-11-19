@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 import streamlit as st
 
 # Read Supabase/PostgreSQL connection URL from Streamlit Secrets
-engine = create_engine(st.secrets["DATABASE_URL"])
+engine = create_engine(st.secrets["DATABASE_URL"], connect_args={"sslmode": "require"})
 
 def load_channels():
     return pd.read_sql("SELECT * FROM channels ORDER BY channel_name;", engine)
